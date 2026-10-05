@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Build
+dist/
+build/
+
+# Heavy models
+tools/*.bin
+tools/*.param
+tools/*.pth
+tools/*.onnx
+tools/models/
+*.pth
+*.onnx
+*.bin
+
+# Exe / DLL
+tools/*.exe
+tools/*.dll
+*.exe
+*.dll
+
+# Exclude entire website directory (GitHub app-only repository)
+web/
+
+# Editor / OS / Local tooling
+.vscode/
+.idea/
+.commandcode/
+Thumbs.db
+.DS_Store
+*.log
+.dev.vars
+.env
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
