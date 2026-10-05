@@ -7,31 +7,29 @@
 
 **Rice Upscaler** is a free, open-source Windows desktop application for AI-powered image upscaling up to 8×. It combines **DAT (Dual Aggregation Transformer)** via DirectML and **Real-ESRGAN** via ncnn-Vulkan with intelligent hardware cascade, exact target-size fitting, batch processing, and 100% offline privacy.
 
-**Rice Upscaler** là ứng dụng desktop chạy trên Windows chuyên phóng đại và phục chế chi tiết ảnh bằng AI lên tới 8×. Phần mềm kết hợp mạng nơ-ron **DAT** (DirectML) và **Real-ESRGAN** (Vulkan) với cơ chế tự động điều phối phần cứng thông minh, khống chế chính xác dung lượng file đầu ra, xử lý hàng loạt và bảo mật ngoại tuyến 100%.
-
 ---
 
-## ✨ Features | Tính năng chính
+## ✨ Features
 
-| Feature / Tính năng | Description / Mô tả |
+| Feature | Description |
 |:---|:---|
-| **Multi-Engine Cascade / Điều phối đa engine** | DAT (DirectML) → Real-ESRGAN (Vulkan) → Lanczos (CPU) tự động chuyển đổi theo phần cứng và độ phân giải |
-| **Scale 1×–8× & DPI** | Tùy chọn phóng to nguyên số 1× đến 8×; thiết lập DPI đầu ra: Mặc định / 150 / 300 DPI chuẩn in ấn |
-| **Target Size Control / Khống chế dung lượng đích** | Khống chế chính xác dung lượng tệp 1–24 MB bằng thuật toán tìm kiếm nhị phân và byte padding (JPEG/PNG) |
-| **Format Support / Hỗ trợ định dạng** | Đầu vào: JPG, PNG, WEBP, HEIC/HEIF · Đầu ra: JPG (chất lượng 1–100%), PNG (nén 0–9) |
-| **Batch Queue / Xử lý hàng loạt** | Kéo thả danh sách tệp, hỗ trợ Windows Long Path (>260 ký tự), đường dẫn Unicode, xem trước hình thu nhỏ |
-| **GPU Acceleration / Tăng tốc GPU** | Tương thích NVIDIA GeForce, AMD Radeon, Intel UHD/Arc qua Vulkan 1.1+ và DirectX 12 DirectML; chia mảng VRAM thích ứng |
-| **100% Offline / Ngoại tuyến hoàn toàn** | Không tải lên đám mây, không thu thập dữ liệu (telemetry), không cần tài khoản — toàn bộ suy luận AI chạy trên máy cục bộ |
+| **Multi-Engine Cascade** | DAT (DirectML) → Real-ESRGAN (Vulkan) → Lanczos (CPU), switching automatically based on hardware and resolution |
+| **Scale 1×–8× & DPI** | Integer upscaling from 1× to 8×; output DPI options: Default / 150 / 300 DPI for print-ready results |
+| **Target Size Control** | Fits output files to an exact size of 1–24 MB using binary search and byte padding (JPEG/PNG) |
+| **Format Support** | Input: JPG, PNG, WEBP, HEIC/HEIF · Output: JPG (quality 1–100%), PNG (compression 0–9) |
+| **Batch Queue** | Drag-and-drop file lists, Windows Long Path (>260 characters) support, Unicode paths, and thumbnail preview |
+| **GPU Acceleration** | Compatible with NVIDIA GeForce, AMD Radeon, and Intel UHD/Arc via Vulkan 1.1+ and DirectX 12 DirectML; adaptive VRAM tiling |
+| **100% Offline** | No cloud uploads, no telemetry, no account required — all AI inference runs locally on your machine |
 
 ---
 
-## 📁 Project Structure | Cấu trúc dự án
+## 📁 Project Structure
 
 ```
 rice-upscaler/
 ├── src/
-│   └── main.py                 # Mã nguồn ứng dụng chính (Tkinter GUI, inference cascade)
-├── tools/                      # Công cụ thực thi và mô hình AI nặng (gitignored)
+│   └── main.py                 # Main application source (Tkinter GUI, inference cascade)
+├── tools/                      # Executables and heavy AI models (gitignored)
 │   ├── realesrgan-ncnn-vulkan.exe
 │   ├── realesrgan-x4plus.bin / .param
 │   ├── realesrgan-x4plus-anime.bin / .param
@@ -40,26 +38,26 @@ rice-upscaler/
 │   └── models/
 │       └── DAT_light_x4.onnx
 ├── assets/
-│   ├── icon/                   # Biểu tượng ứng dụng (rice.ico, icon-new.ico, etc.)
-│   └── forest/                 # Giao diện ttk Forest Dark & Forest Light
-├── dist/                       # Thư mục đầu ra khi đóng gói (gitignored)
+│   ├── icon/                   # Application icons (rice.ico, icon-new.ico, etc.)
+│   └── forest/                 # ttk Forest Dark & Forest Light themes
+├── dist/                       # Packaging output directory (gitignored)
 │   └── RiceUpscaler.exe
-├── build/                      # Tệp tạm của PyInstaller (gitignored)
-├── RiceUpscaler.spec           # Cấu hình đóng gói PyInstaller
-├── requirements.txt            # Thư viện Python phụ thuộc
-├── LICENSE                     # Giấy phép MIT
-└── README.md                   # Tài liệu hướng dẫn
+├── build/                      # PyInstaller temporary files (gitignored)
+├── RiceUpscaler.spec           # PyInstaller packaging configuration
+├── requirements.txt            # Python dependencies
+├── LICENSE                     # MIT License
+└── README.md                   # Documentation
 ```
 
 ---
 
-## 📦 Heavy Models & Binaries | Kênh tải mô hình AI nặng
+## 📦 Downloading Heavy Models
 
-Do kích thước lớn, các tệp nhị phân và trọng số mô hình trong thư mục `tools/` được loại trừ khỏi kho mã nguồn (`.gitignore`). Cần chuẩn bị các tệp sau trước khi chạy hoặc đóng gói:
+Due to their large size, the binaries and model weights in the `tools/` directory are excluded from the repository (`.gitignore`). Prepare the following files before running or packaging:
 
 ### 1. Real-ESRGAN NCNN Vulkan
-- **Tải về**: Truy cập [Real-ESRGAN Releases](https://github.com/xinntao/Real-ESRGAN/releases) và tải bản phát hành Windows (ví dụ: `realesrgan-ncnn-vulkan-*-windows.zip`).
-- **Thao tác**: Giải nén và đặt các tệp sau trực tiếp vào thư mục `tools/`:
+- **Download**: Go to the [Real-ESRGAN Releases](https://github.com/xinntao/Real-ESRGAN/releases) page and download the Windows release (e.g., `realesrgan-ncnn-vulkan-*-windows.zip`).
+- **Setup**: Extract the archive and place the following files directly into the `tools/` folder:
   - `realesrgan-ncnn-vulkan.exe`
   - `realesrgan-x4plus.bin` & `realesrgan-x4plus.param`
   - `realesrgan-x4plus-anime.bin` & `realesrgan-x4plus-anime.param`
@@ -67,40 +65,40 @@ Do kích thước lớn, các tệp nhị phân và trọng số mô hình trong
   - `vcomp140.dll`
 
 ### 2. DAT (Dual Aggregation Transformer) ONNX
-- **Tải về**: Tải mô hình `DAT_light_x4.onnx` từ kho [zhengchen1999/DAT](https://github.com/zhengchen1999/DAT) hoặc các bản phát hành của dự án.
-- **Thao tác**: Đặt tệp vào thư mục:
+- **Download**: Download the `DAT_light_x4.onnx` model from the [zhengchen1999/DAT](https://github.com/zhengchen1999/DAT) repository or its releases.
+- **Setup**: Place the file at:
   ```
   tools/models/DAT_light_x4.onnx
   ```
 
 ---
 
-## 🚀 Getting Started | Cài đặt & Chạy từ Clone
+## 🚀 Getting Started
 
-### Yêu cầu hệ thống (Prerequisites)
-- **Hệ điều hành**: Windows 10 / 11 (64-bit), phiên bản 1607 trở lên
-- **Python**: Python 3.10 trở lên ([python.org](https://www.python.org/downloads/))
-- **GPU (khuyến nghị)**: NVIDIA (GTX 900+), AMD (RX 400+), Intel (UHD 620+ / Arc) hỗ trợ Vulkan 1.1+ hoặc DirectX 12
-- **RAM**: Tối thiểu 4 GB (khuyến nghị 8–16 GB)
+### Prerequisites
+- **Operating System**: Windows 10 / 11 (64-bit), version 1607 or later
+- **Python**: Python 3.10 or newer ([python.org](https://www.python.org/downloads/))
+- **GPU (recommended)**: NVIDIA (GTX 900+), AMD (RX 400+), or Intel (UHD 620+ / Arc) with Vulkan 1.1+ or DirectX 12 support
+- **RAM**: Minimum 4 GB (8–16 GB recommended)
 
-### Cài đặt môi trường
+### Installation
 
 ```bash
-# 1. Clone repository
-git clone https://github.com/blackmagicc093/rice-upscaler.git
+# 1. Clone the repository
+git clone https://github.com/blackmagicc093/rice-upscaler
 cd rice-upscaler
 
-# 2. Khởi tạo môi trường ảo (khuyến nghị)
+# 2. Create a virtual environment (recommended)
 python -m venv .venv
 .venv\Scripts\activate
 
-# 3. Cài đặt các thư viện phụ thuộc
+# 3. Install the dependencies
 pip install -r requirements.txt
 ```
 
-### Chạy ứng dụng
+### Running the Application
 
-Sau khi đã đặt đủ các mô hình trong `tools/`:
+Once all models are in place under `tools/`:
 
 ```bash
 python src/main.py
@@ -108,25 +106,25 @@ python src/main.py
 
 ---
 
-## 🔨 Build Executable | Đóng gói tệp thực thi (.exe)
+## 🔨 Build Executable
 
-Ứng dụng có thể được đóng gói thành tệp thực thi độc lập bằng PyInstaller:
+The application can be packaged into a standalone executable with PyInstaller:
 
 ```bash
-# 1. Cài đặt PyInstaller
+# 1. Install PyInstaller
 pip install pyinstaller
 
-# 2. Thực hiện đóng gói với file spec đi kèm
+# 2. Build using the provided spec file
 pyinstaller RiceUpscaler.spec
 ```
 
-Sau khi hoàn tất, tệp `.exe` độc lập sẽ nằm trong thư mục `dist/RiceUpscaler.exe`. Tệp này đã tích hợp sẵn toàn bộ giao diện, mô hình AI trong `tools/` và biểu tượng ứng dụng.
+When the build finishes, the standalone `.exe` will be located at `dist/RiceUpscaler.exe`. It bundles the GUI, the AI models from `tools/`, and the application icon.
 
 ---
 
-## 🧪 Verification | Kiểm tra cú pháp
+## 🧪 Verification
 
-Kiểm tra cú pháp Python:
+Check the Python syntax with:
 
 ```bash
 python -m py_compile src/main.py
@@ -134,18 +132,18 @@ python -m py_compile src/main.py
 
 ---
 
-## 📜 License | Giấy phép
+## 📜 License
 
-Dự án được phân phối dưới giấy phép **MIT License** — xem tệp [LICENSE](LICENSE) để biết chi tiết.
+This project is distributed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🙏 Third-Party Credits | Thư viện & Công trình kế thừa
+## 🙏 Third-Party Credits
 
-- [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN) (xinntao) — Mô hình phục chế ảnh và video (BSD-3-Clause)
-- [DAT (Dual Aggregation Transformer)](https://github.com/zhengchen1999/DAT) (zhengchen1999) — Kiến trúc Transformer siêu phân giải ảnh
-- [ncnn](https://github.com/Tencent/ncnn) (Tencent) — Framework suy luận nơ-ron tối ưu hóa cho Vulkan
-- [onnxruntime / DirectML](https://github.com/microsoft/DirectML) (Microsoft) — Tăng tốc suy luận ONNX qua DirectX 12
-- [Pillow & pillow-heif](https://github.com/python-pillow/Pillow) — Xử lý các định dạng hình ảnh và HEIC
-- [windnd](https://github.com/hasenbanck/windnd) — Tương tác kéo thả tệp trên Windows
-- [Forest Tkinter Theme](https://github.com/rdbende/Forest-ttk-theme) (rdbende) — Giao diện dark/light hiện đại cho Tkinter
+- [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN) (xinntao) — Image and video restoration models (BSD-3-Clause)
+- [DAT (Dual Aggregation Transformer)](https://github.com/zhengchen1999/DAT) (zhengchen1999) — Image super-resolution Transformer architecture
+- [ncnn](https://github.com/Tencent/ncnn) (Tencent) — Vulkan-optimized neural network inference framework
+- [onnxruntime / DirectML](https://github.com/microsoft/DirectML) (Microsoft) — ONNX inference acceleration via DirectX 12
+- [Pillow & pillow-heif](https://github.com/python-pillow/Pillow) — Image format and HEIC handling
+- [windnd](https://github.com/hasenbanck/windnd) — File drag-and-drop interaction on Windows
+- [Forest Tkinter Theme](https://github.com/rdbende/Forest-ttk-theme) (rdbende) — Modern dark/light themes for Tkinter
