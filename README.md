@@ -5,267 +5,147 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-green.svg)](https://www.python.org/)
 [![Architecture](https://img.shields.io/badge/Architecture-x64-lightgrey.svg)]()
 
-**Rice Upscaler** is a Windows desktop application for AI-powered image upscaling up to 8×. It combines **DAT (Dual Aggregation Transformer)** via DirectML and **Real-ESRGAN** via ncnn-Vulkan with intelligent hardware cascade, exact target-size fitting, batch processing, and 100% offline privacy. Includes a Cloudflare Worker landing page with live download statistics.
+**Rice Upscaler** is a free, open-source Windows desktop application for AI-powered image upscaling up to 8×. It combines **DAT (Dual Aggregation Transformer)** via DirectML and **Real-ESRGAN** via ncnn-Vulkan with intelligent hardware cascade, exact target-size fitting, batch processing, and 100% offline privacy.
+
+**Rice Upscaler** là ứng dụng desktop chạy trên Windows chuyên phóng đại và phục chế chi tiết ảnh bằng AI lên tới 8×. Phần mềm kết hợp mạng nơ-ron **DAT** (DirectML) và **Real-ESRGAN** (Vulkan) với cơ chế tự động điều phối phần cứng thông minh, khống chế chính xác dung lượng file đầu ra, xử lý hàng loạt và bảo mật ngoại tuyến 100%.
 
 ---
 
-## ✨ Features | Tính năng
+## ✨ Features | Tính năng chính
 
 | Feature / Tính năng | Description / Mô tả |
 |:---|:---|
-| **Multi-Engine Cascade / Cascade đa engine** | DAT (DirectML) → Real-ESRGAN (Vulkan) → Lanczos (CPU) automatic fallback |
-| **Scale 1×–8× & DPI** | Integer scaling slider; output DPI presets: Default / 150 / 300 |
-| **Target Size Control / Khống chế dung lượng đích** | Exact file size 1–24 MB via binary search + byte padding (JPEG/PNG) |
-| **Format Support / Hỗ trợ định dạng** | Input: JPG, PNG, WEBP, HEIC/HEIF · Output: JPG (1–100%), PNG (0–9) |
-| **Batch Queue / Xử lý hàng loạt** | Drag-and-drop, Windows Long Path (>260 chars), Unicode, live thumbnails |
-| **GPU Acceleration / Tăng tốc GPU** | NVIDIA, AMD, Intel via Vulkan 1.1+ & DirectX 12 DirectML; adaptive VRAM tiling |
-| **100% Offline / 100% Ngoại tuyến** | Zero cloud, zero telemetry, zero accounts — all inference runs locally |
-| **Live Download Stats / Thống kê tải thực tế** | Cloudflare Worker + KV counter (total, per-country, last download) |
-| **R2 Distribution / Phân phối R2** | High-speed direct downloads from Cloudflare R2 bucket |
-
----
-
-## 🖼️ Screenshots | Ảnh chụp màn hình
-
-> Add screenshots here: landing page, download page with live counter, settings panel.
+| **Multi-Engine Cascade / Điều phối đa engine** | DAT (DirectML) → Real-ESRGAN (Vulkan) → Lanczos (CPU) tự động chuyển đổi theo phần cứng và độ phân giải |
+| **Scale 1×–8× & DPI** | Tùy chọn phóng to nguyên số 1× đến 8×; thiết lập DPI đầu ra: Mặc định / 150 / 300 DPI chuẩn in ấn |
+| **Target Size Control / Khống chế dung lượng đích** | Khống chế chính xác dung lượng tệp 1–24 MB bằng thuật toán tìm kiếm nhị phân và byte padding (JPEG/PNG) |
+| **Format Support / Hỗ trợ định dạng** | Đầu vào: JPG, PNG, WEBP, HEIC/HEIF · Đầu ra: JPG (chất lượng 1–100%), PNG (nén 0–9) |
+| **Batch Queue / Xử lý hàng loạt** | Kéo thả danh sách tệp, hỗ trợ Windows Long Path (>260 ký tự), đường dẫn Unicode, xem trước hình thu nhỏ |
+| **GPU Acceleration / Tăng tốc GPU** | Tương thích NVIDIA GeForce, AMD Radeon, Intel UHD/Arc qua Vulkan 1.1+ và DirectX 12 DirectML; chia mảng VRAM thích ứng |
+| **100% Offline / Ngoại tuyến hoàn toàn** | Không tải lên đám mây, không thu thập dữ liệu (telemetry), không cần tài khoản — toàn bộ suy luận AI chạy trên máy cục bộ |
 
 ---
 
 ## 📁 Project Structure | Cấu trúc dự án
 
 ```
-UPSCALE/
+rice-upscaler/
 ├── src/
-│   └── main.py                 # Main Python application (Tkinter GUI)
-├── web/                        # Cloudflare Worker (landing + download + stats)
-│   ├── index.js                # Worker entry point (API, routing, KV/R2)
-│   ├── templates.js            # HTML templates (EN/VI, stats, pages)
-│   ├── icon.js                 # Base64-encoded app icon
-│   ├── wrangler.toml.example   # Template config (copy to wrangler.toml)
-│   ├── package.json            # npm scripts (dev, deploy, kv:create, r2:create)
-│   ├── DEPLOY-VI.md            # Vietnamese deploy guide
-│   └── INFRA.md                # Infrastructure reference (template only)
-├── tools/                      # Bundled binaries & models (gitignored)
+│   └── main.py                 # Mã nguồn ứng dụng chính (Tkinter GUI, inference cascade)
+├── tools/                      # Công cụ thực thi và mô hình AI nặng (gitignored)
 │   ├── realesrgan-ncnn-vulkan.exe
-│   ├── realesrgan-x4plus.bin/.param
-│   ├── realesr-animevideov3-x2/x3/x4.bin/.param
+│   ├── realesrgan-x4plus.bin / .param
+│   ├── realesrgan-x4plus-anime.bin / .param
+│   ├── realesr-animevideov3-x2/x3/x4.bin / .param
+│   ├── vcomp140.dll
 │   └── models/
 │       └── DAT_light_x4.onnx
 ├── assets/
-│   ├── icon/                   # App icons (rice.png, rice.ico, etc.)
-│   └── forest/                 # Tkinter forest-dark theme
-├── dist/                       # Build output (gitignored)
+│   ├── icon/                   # Biểu tượng ứng dụng (rice.ico, icon-new.ico, etc.)
+│   └── forest/                 # Giao diện ttk Forest Dark & Forest Light
+├── dist/                       # Thư mục đầu ra khi đóng gói (gitignored)
 │   └── RiceUpscaler.exe
-├── build/                      # PyInstaller artifacts (gitignored)
-├── RiceUpscaler.spec           # PyInstaller spec
-├── requirements.txt            # Python dependencies
-├── LICENSE                     # MIT License
-└── README.md                   # This file
+├── build/                      # Tệp tạm của PyInstaller (gitignored)
+├── RiceUpscaler.spec           # Cấu hình đóng gói PyInstaller
+├── requirements.txt            # Thư viện Python phụ thuộc
+├── LICENSE                     # Giấy phép MIT
+└── README.md                   # Tài liệu hướng dẫn
 ```
-
-> **Note:** `tools/`, `dist/`, `build/`, `web/wrangler.toml`, `web/node_modules/`, `web/.wrangler/` are gitignored. See `.gitignore` for full list.
 
 ---
 
-## 🚀 Quick Start | Bắt đầu nhanh
+## 📦 Heavy Models & Binaries | Kênh tải mô hình AI nặng
 
-### Prerequisites | Yêu cầu hệ thống
+Do kích thước lớn, các tệp nhị phân và trọng số mô hình trong thư mục `tools/` được loại trừ khỏi kho mã nguồn (`.gitignore`). Cần chuẩn bị các tệp sau trước khi chạy hoặc đóng gói:
 
-- **Windows 10/11 (64-bit)** — Version 1607+
-- **Python 3.10+** — [python.org](https://www.python.org/downloads/)
-- **GPU (optional but recommended)** — NVIDIA GTX 900+ / AMD RX 400+ / Intel UHD 620+ / Arc
-  - DirectML (DAT) or Vulkan 1.1+ (Real-ESRGAN)
-- **RAM** — 4 GB minimum (2 GB free for AI), 8–16 GB recommended
+### 1. Real-ESRGAN NCNN Vulkan
+- **Tải về**: Truy cập [Real-ESRGAN Releases](https://github.com/xinntao/Real-ESRGAN/releases) và tải bản phát hành Windows (ví dụ: `realesrgan-ncnn-vulkan-*-windows.zip`).
+- **Thao tác**: Giải nén và đặt các tệp sau trực tiếp vào thư mục `tools/`:
+  - `realesrgan-ncnn-vulkan.exe`
+  - `realesrgan-x4plus.bin` & `realesrgan-x4plus.param`
+  - `realesrgan-x4plus-anime.bin` & `realesrgan-x4plus-anime.param`
+  - `realesr-animevideov3-x2.bin`, `realesr-animevideov3-x3.bin`, `realesr-animevideov3-x4.bin` (& `.param`)
+  - `vcomp140.dll`
 
-### Installation | Cài đặt
+### 2. DAT (Dual Aggregation Transformer) ONNX
+- **Tải về**: Tải mô hình `DAT_light_x4.onnx` từ kho [zhengchen1999/DAT](https://github.com/zhengchen1999/DAT) hoặc các bản phát hành của dự án.
+- **Thao tác**: Đặt tệp vào thư mục:
+  ```
+  tools/models/DAT_light_x4.onnx
+  ```
+
+---
+
+## 🚀 Getting Started | Cài đặt & Chạy từ Clone
+
+### Yêu cầu hệ thống (Prerequisites)
+- **Hệ điều hành**: Windows 10 / 11 (64-bit), phiên bản 1607 trở lên
+- **Python**: Python 3.10 trở lên ([python.org](https://www.python.org/downloads/))
+- **GPU (khuyến nghị)**: NVIDIA (GTX 900+), AMD (RX 400+), Intel (UHD 620+ / Arc) hỗ trợ Vulkan 1.1+ hoặc DirectX 12
+- **RAM**: Tối thiểu 4 GB (khuyến nghị 8–16 GB)
+
+### Cài đặt môi trường
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/<your-username>/RiceUpscaler.git
-cd RiceUpscaler
+git clone https://github.com/blackmagicc093/rice-upscaler.git
+cd rice-upscaler
 
-# 2. Install Python dependencies
+# 2. Khởi tạo môi trường ảo (khuyến nghị)
+python -m venv .venv
+.venv\Scripts\activate
+
+# 3. Cài đặt các thư viện phụ thuộc
 pip install -r requirements.txt
+```
 
-# 3. Run the application
+### Chạy ứng dụng
+
+Sau khi đã đặt đủ các mô hình trong `tools/`:
+
+```bash
 python src/main.py
 ```
 
-> The bundled binaries in `tools/` and models in `tools/models/` are included in the repo (or downloaded via release). PyInstaller bundles them into the standalone `.exe`.
-
 ---
 
-## 🔨 Build Executable | Build file thực thi
+## 🔨 Build Executable | Đóng gói tệp thực thi (.exe)
 
-Using PyInstaller with the provided spec:
+Ứng dụng có thể được đóng gói thành tệp thực thi độc lập bằng PyInstaller:
 
 ```bash
-# Install PyInstaller if not present
+# 1. Cài đặt PyInstaller
 pip install pyinstaller
 
-# Build
+# 2. Thực hiện đóng gói với file spec đi kèm
 pyinstaller RiceUpscaler.spec
-
-# Output: dist/RiceUpscaler.exe (standalone, ~200-300 MB with models)
 ```
 
-The spec file configures:
-- Hidden imports for `onnxruntime`, `ncnn`, `pillow_heif`, `numpy`, `windnd`
-- Bundled `tools/` binaries and `tools/models/` ONNX/param files
-- `assets/icon/rice.ico` as application icon
-- `assets/forest/` theme resources
-- UPX compression (optional, disable if antivirus false positives)
+Sau khi hoàn tất, tệp `.exe` độc lập sẽ nằm trong thư mục `dist/RiceUpscaler.exe`. Tệp này đã tích hợp sẵn toàn bộ giao diện, mô hình AI trong `tools/` và biểu tượng ứng dụng.
 
 ---
 
-## ☁️ Web Deployment (Cloudflare Worker) | Triển khai Web
+## 🧪 Verification | Kiểm tra cú pháp
 
-The `web/` directory contains a Cloudflare Worker providing:
-- Landing page (EN/VI)
-- Download page with **live real-time counter** (KV)
-- Direct `.exe` downloads from **R2 Storage**
-- REST API: `GET /api/stats` → `{ total, countries, last }`
-
-### Setup | Thiết lập
-
-```bash
-cd web
-npm install          # Install Wrangler
-cp wrangler.toml.example wrangler.toml
-# Edit wrangler.toml: fill in YOUR_KV_NAMESPACE_ID, optionally custom domain
-```
-
-### Create Resources | Tạo tài nguyên
-
-```bash
-# Create KV namespace for download stats
-npm run kv:create
-# → Copy the returned ID into wrangler.toml (kv_namespaces.id)
-
-# Create R2 bucket for releases
-npm run r2:create
-```
-
-### Upload Release | Tải lên bản phát hành
-
-```bash
-# Build the exe first (see Build section above)
-# Then upload to R2:
-npx wrangler r2 object put riceupscale-releases/RiceUpscaler-v1.0.0.exe \
-  --file="../dist/RiceUpscaler.exe" --remote
-```
-
-### Local Development | Phát triển cục bộ
-
-```bash
-npm run dev
-# Opens http://localhost:8787
-```
-
-### Deploy | Triển khai
-
-```bash
-npm run deploy
-# → https://riceupscale-web.<your-subdomain>.workers.dev
-# Or your custom domain if configured
-```
-
-### Custom Domain (Optional) | Tên miền riêng
-
-```bash
-npx wrangler custom-domain add yourdomain.com
-# Or via Cloudflare Dashboard: Workers & Pages → riceupscale-web → Settings → Domains & Routes
-```
-
-### Monitor Stats | Theo dõi thống kê
-
-```bash
-# Total downloads
-npx wrangler kv key get --binding=RICEUPSCALE_KV "total"
-
-# Per-country breakdown
-npx wrangler kv key get --binding=RICEUPSCALE_KV "countries"
-
-# Last download
-npx wrangler kv key get --binding=RICEUPSCALE_KV "last"
-
-# Real-time logs
-npx wrangler tail
-```
-
----
-
-## 🧪 Verification | Kiểm tra
-
-### Python Syntax Check
+Kiểm tra cú pháp Python:
 
 ```bash
 python -m py_compile src/main.py
-```
-
-### Node/Worker Syntax Check
-
-```bash
-cd web
-node --check index.js
-node --check templates.js
-node --check icon.js
-```
-
-### Lint / Typecheck (Optional)
-
-```bash
-# Python (if ruff/mypy configured)
-ruff check src/
-mypy src/
-
-# JS (if eslint configured)
-npx eslint web/*.js
 ```
 
 ---
 
 ## 📜 License | Giấy phép
 
-This project is licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
-
-Dự án được phát hành dưới giấy phép **MIT** — xem [LICENSE](LICENSE) để biết chi tiết.
+Dự án được phân phối dưới giấy phép **MIT License** — xem tệp [LICENSE](LICENSE) để biết chi tiết.
 
 ---
 
-## 🙏 Third-Party Libraries | Thư viện bên thứ ba
+## 🙏 Third-Party Credits | Thư viện & Công trình kế thừa
 
-| Library / Thư viện | License / Giấy phép | Purpose / Mục đích |
-|:---|:---|:---|
-| Real-ESRGAN (xinntao) | BSD-3-Clause | Anime/photo upscaling models |
-| ncnn (Tencent) | BSD-3-Clause | Vulkan inference engine |
-| onnxruntime / onnxruntime-directml | MIT | DAT ONNX inference on DirectML |
-| Pillow (PIL) | HPND | Image loading/saving/processing |
-| pillow_heif | MIT | HEIC/HEIF support |
-| NumPy | BSD-3-Clause | Numerical operations |
-| windnd | MIT | Windows drag-and-drop |
-| PyInstaller | GPL-2.0 (runtime exception) | Executable bundling |
-| forest-dark theme | MIT | Modern Tkinter theme |
-| Plus Jakarta Sans / JetBrains Mono | SIL OFL 1.1 / OFL 1.1 | Web fonts (via Google Fonts) |
-
----
-
-## 🌐 Links | Liên kết
-
-- **Issues / Báo lỗi**: GitHub Issues
-- **Releases / Bản phát hành**: GitHub Releases
-- **Live Demo / Demo trực tuyến**: `https://your-domain.workers.dev` (after deploy)
-
----
-
-## 👤 Author | Tác giả
-
-**Rice Upscaler** — Open-source offline AI image upscaler for Windows.
-
----
-
-<div align="center">
-
-**Made with ❤️ for the open-source community** · **Được tạo với ❤️ cho cộng đồng mã mở**
-
-</div>
+- [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN) (xinntao) — Mô hình phục chế ảnh và video (BSD-3-Clause)
+- [DAT (Dual Aggregation Transformer)](https://github.com/zhengchen1999/DAT) (zhengchen1999) — Kiến trúc Transformer siêu phân giải ảnh
+- [ncnn](https://github.com/Tencent/ncnn) (Tencent) — Framework suy luận nơ-ron tối ưu hóa cho Vulkan
+- [onnxruntime / DirectML](https://github.com/microsoft/DirectML) (Microsoft) — Tăng tốc suy luận ONNX qua DirectX 12
+- [Pillow & pillow-heif](https://github.com/python-pillow/Pillow) — Xử lý các định dạng hình ảnh và HEIC
+- [windnd](https://github.com/hasenbanck/windnd) — Tương tác kéo thả tệp trên Windows
+- [Forest Tkinter Theme](https://github.com/rdbende/Forest-ttk-theme) (rdbende) — Giao diện dark/light hiện đại cho Tkinter
